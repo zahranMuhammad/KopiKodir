@@ -1,0 +1,25 @@
+# Build results
+bin/
+obj/
+publish/
+out/
+
+# User-specific files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Secrets / sensitive config
+appsettings.Development.json
+secrets.json
+.env
+
+# IDE / Editor folders
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
