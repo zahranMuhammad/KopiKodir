@@ -1,0 +1,112 @@
+@{
+    ViewData["title"] = "Kelola Penjualan";
+}
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Kelola Penjualan</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="tableTransaksi"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts 
+{
+    <script>
+        $(function() {
+            $("#tableTransaksi").dxDataGrid({
+                dataSource: {
+                    store: {
+                        type: "odata",
+                        version: 4,
+                        url: "/odata/ApiTransaksi",
+                        key: "Id"
+                    }
+                },
+                paging: {
+                    pageSize: 10
+                },
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [10, 20, 50],
+                    showInfo: true
+                },
+                filterRow: {
+                    visible: true
+                },
+                searchPanel: {
+                    visible: true,
+                    width: 240,
+                    placeholder: "Cari..."  
+                },
+                columns: [
+                    {
+                        dataField: "Id",
+                        visible: false,
+                        sortOrder: "desc", 
+                        sortIndex: 0       
+                    },
+                    {
+                        caption: "No",
+                        cellTemplate: function (container, options) {
+                            container.text(options.rowIndex + 1);
+                        },
+                        width: 50
+                    },
+                    { 
+                        dataField: "Tanggal", 
+                        caption: "Tanggal" 
+                    },
+                    {
+                        dataField: "Nominal",
+                        caption: "Nominal",
+                        format: {
+                            type: "currency",
+                            precision: 0,
+                            currency: "IDR" 
+                        }
+                    },
+                    {
+                        dataField: "JumlahBayar",
+                        caption: "Jumlah Bayar",
+                        format: {
+                            type: "currency",
+                            precision: 0,
+                            currency: "IDR" 
+                        }
+                    },
+                    { 
+                        dataField: "MetodePembayaran", 
+                        caption: "Metode Pembayaran" 
+                    },                    
+                    { 
+                        dataField: "Status", 
+                        caption: "Status" 
+                    },
+                    {
+                        caption: "Aksi",
+                        cellTemplate: function (container, options) {
+                            const id = options.data.Id;
+                            const div = $("<div>");
+                                div.append(`<a class="btn btn-sm btn-warning mr-1" href="/Transaksi/DetailPenjualan/${id}">Detail</a>`);
+                                div.append(`<button class="btn btn-sm btn-danger mr-1" onclick="openDetailModal(${id})">Hapus</button>`);
+                            container.append(div);
+                        },
+                        width: 150
+                    }
+                ] 
+            });
+        });
+    </script>
+}

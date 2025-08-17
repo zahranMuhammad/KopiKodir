@@ -1,0 +1,38 @@
+@model IEnumerable<CoffeShop.Models.DetailTransaksi>
+
+@{
+    ViewData["Title"] = "Daftar Produk";
+}
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Daftar Produk Dibeli</h3>
+                        <a href="@Url.Action("Index", "Transaksi")" class="btn btn-primary">Kembali</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var detail in Model)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100 shadow-sm">
+                                        <img src="@Url.Content(@detail.produk.GambarProduk)" class="card-img-top" alt="@detail.produk.Nama" style="height: 200px; object-fit: cover;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@detail.produk.Nama</h5>
+                                            <p class="card-text">Jumlah: @detail.JumlaBarang</p>
+                                            <p class="card-text">Harga Satuan: Rp @String.Format("{0:N0}", detail.produk.HargaProduk)</p>
+                                            <p class="card-text"><strong>Total: Rp @String.Format("{0:N0}", detail.Total)</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+@{
+    ViewData["title"] = "Supplier";
+}
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Kelola Supplier</h3>
+                        <a href="@Url.Action("Create", "Supplier")" class="btn btn-primary">Tambah Data</a>
+                    </div>
+                    <div class="card-body">
+                        <div id="tableSupplier"></div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function() {
+            $("#tableSupplier").dxDataGrid({
+                dataSource: {
+                    store: {
+                        type: "odata",
+                        version: 4,
+                        url: "/odata/ApiSupplier",
+                        key: "Id"
+                    }
+                },
+                paging: {
+                    pageSize: 10
+                },
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [10, 20, 50],
+                    showInfo: true
+                },
+                filterRow: {
+                    visible: true
+                },
+                searchPanel: {
+                    visible: true,
+                    width: 240,
+                    placeholder: "Cari..."  
+                },
+                columns: [
+                    {
+                        dataField: "Id",
+                        visible: false,
+                        sortOrder: "desc", 
+                        sortIndex: 0       
+                    },
+                    {
+                        caption: "No",
+                        cellTemplate: function (container, options) {
+                            container.text(options.rowIndex + 1);
+                        },
+                        width: 50
+                    },
+                    { 
+                        dataField: "Nama", 
+                        caption: "Nama" 
+                    },
+                    {
+                        dataField: "Email",
+                        caption: "Email"
+                    },
+                    {
+                        dataField: "Alamat", 
+                        caption: "Alamat" 
+                    },
+                    {
+                        caption: "Aksi",
+                        cellTemplate: function (container, options) {
+                            const id = options.data.Id;
+                            const div = $("<div>");
+                                div.append(`<a class="btn btn-sm btn-warning mr-1" href="/Supplier/Edit/${id}">Edit</a>`);
+                                div.append(`<button class="btn btn-sm btn-danger mr-1 btnHapus" type="button" data-id="${id}">Hapus</button>`);
+                            container.append(div);
+                        },
+                        width: 170
+                    }
+                ] 
+            });
+        });
+
+        $(document).on("click", ".btnHapus", function(e) {
+            e.preventDefault();
+
+            const id = $(this).data("id");
+            const url = `/Supplier/Delete/${id}`;
+
+            if (confirm("Yakin ingin hapus data ini?")) {
+                $.ajax({
+                    url: url,
+                    type: "POST", 
+                    success: function(response) {
+                        $("#tableSupplier").dxDataGrid("instance").refresh(); 
+                    },
+                    error: function(xhr, status, code) {
+                        alert("Gagal menghapus data: " + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+    </script>
+}

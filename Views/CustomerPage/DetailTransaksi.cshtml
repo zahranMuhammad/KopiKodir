@@ -1,0 +1,149 @@
+@model CoffeShop.Models.Produk
+
+@{
+    ViewData["title"] = "Checkout";
+    Layout = "~/Views/CustomerPage/Layout.cshtml";
+}
+
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <form id="formCheckout" class="content-body">
+        @Html.AntiForgeryToken()
+
+        @{
+            int qty = ViewBag.Qty != null ? Convert.ToInt32(ViewBag.Qty) : 0;
+            decimal total = Model.HargaProduk * qty; 
+        }
+
+        @* data id produk dan juga qty jumlah beli *@
+        <input type="hidden" value="@Model.id" name="ProdukId">
+        <input type="hidden" value="@ViewBag.Qty" name="JumlahBeli">
+        <input type="hidden" value="@total" name="Total">
+
+        <h3 class="mb-3">Checkout</h3>
+
+        <div class="card mb-2 w-100 shadow-sm">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="@Url.Content(Model.GambarProduk)" alt="Produk" class="img-fluid rounded" style="object-fit: cover; width: 100px; height: 100px;">
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-1 fw-bold">@Model.Nama</h5>
+                        <p class="mb-1 text-muted">Stok: @Model.Stok</p>
+                        <p class="mb-0">Harga: Rp @Model.HargaProduk.ToString("N0")</p>  
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <p class="mb-1">Jumlah: <strong>@ViewBag.Qty</strong></p>
+                        
+                        <p class="mb-0">Total: <strong>Rp @total.ToString("N0")</strong></p> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Metode Pembayaran -->
+        <div class="card shadow-sm mb-2">
+            <div class="card-body">
+                <h5 class="mb-3">Metode Pembayaran</h5>
+
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="metodePembayaran" id="cod" value="COD" required>
+                    <label class="form-check-label" for="cod">
+                        Bayar di Tempat (COD)
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="metodePembayaran" id="saldo" value="SALDO" required>
+                    <label class="form-check-label" for="saldo">
+                        Bayar (SALDO)
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Identitas Pembeli -->
+        <div class="card shadow-sm mb-2">
+            <div class="card-body">
+                <h5 class="mb-3">Identitas Pembeli</h5>
+
+                <div class="row mb-2">
+                    <div class="col-md-3 fw-semibold text-muted">Nama</div>
+                    <div class="col-md-9">@ViewBag.dataUser.Nama</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-3 fw-semibold text-muted">Email</div>
+                    <div class="col-md-9">@ViewBag.dataUser.Email</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-3 fw-semibold text-muted">No. HP</div>
+                    <div class="col-md-9">@ViewBag.dataUser.NoHp</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3 fw-semibold text-muted">Alamat</div>
+                    <div class="col-md-9">
+                        @ViewBag.dataUser.Alamat
+                    </div>
+                </div>
+                <iframe class="mb-2" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1980.1396247430296!2d107.75744945723117!3d-6.976342526530803!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c388e11b73cd%3A0x97aaaa1872240f71!2sJl.%20Kamboja%20I%2021-47%2C%20Rancaekek%20Wetan%2C%20Kec.%20Rancaekek%2C%20Kabupaten%20Bandung%2C%20Jawa%20Barat%2040394!5e0!3m2!1sid!2sid!4v1747376648723!5m2!1sid!2sid" width="400" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                
+                <div class="row mb-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="fw-semibold text-muted">Total </div>
+                        <div>Rp. @total.ToString("N0")</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Tombol Bayar -->
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success btn-lg" id="btnBayar">Bayar Sekarang</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts 
+{
+    <script>
+        $("#formCheckout").submit(function(e) {
+            e.preventDefault();
+
+            var produkId = $("input[name='ProdukId']").val();
+            var jumlahBeli = $("input[name='JumlahBeli']").val();
+            var total = $("input[name='Total']").val();
+            var metodePembayaran = $("input[name='metodePembayaran']:checked").val();
+            var token = $('input[name="__RequestVerificationToken"]').val(); // ambil token
+
+            console.log(produkId);
+            console.log(jumlahBeli);
+            console.log(total);
+            console.log(metodePembayaran);
+
+            $.ajax({
+                url: '/CustomerPage/CheckoutOneProduk',
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: token, 
+                    ProdukId: produkId,
+                    JumlahBeli: jumlahBeli,
+                    Total: total,
+                    Metode: metodePembayaran
+                },
+                success: function(response) {
+                    alert(response.pesan);
+
+                    window.location = '@Url.Action("Index", "CustomerPage")';
+                },
+                error: function(xhr, status, error) {
+                    const res = JSON.parse(xhr.responseText);
+                    alert("Gagal: " + res.pesan);
+                }
+            });
+        });
+    </script>
+}

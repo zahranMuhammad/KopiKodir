@@ -1,0 +1,53 @@
+@model CoffeShop.Models.Produk
+
+@{
+    Layout = null;
+}
+
+<div class="modal-header">
+    <h5 class="modal-title" id="detailModalLabel">@Model.Nama</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup">
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-5">
+            <img src="@Url.Content(Model.GambarProduk)" alt="@Model.Nama"
+                 class="img-fluid rounded" style="object-fit: cover; max-height: 300px; width: 100%;">
+        </div>
+        <div class="col-md-7">
+            <h4 class="fw-bold">@Model.Nama</h4>
+            <h5 class="text-danger">Rp @Model.HargaProduk.ToString("N0")</h5>
+            <div class="text-muted mb-2">Stok : @Model.Stok</div>
+
+            <p>@Model.Deskripsi</p>
+
+            <div class="d-flex align-items-center mb-3">
+                <label class="me-2 mb-0">Jumlah:</label>
+                <div class="d-flex" style="width: 180px;">
+                    <button class="btn btn-outline-secondary" type="button" id="buttonMin">−</button>
+                        <input type="hidden" value="@Model.Stok" id="jumlahStok">
+                        <input type="number" id="jumlahInput" class="form-control text-center" value="1" readonly>
+                    <button class="btn btn-outline-secondary" type="button" id="buttonPlus">+</button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center gap-2 mt-4">
+                <form id="formKeranjang">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" value="@Model.id" id="ProdukId">
+                    <button type="submit" class="btn btn-outline-secondary" title="Tambah ke Keranjang">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="Cart Plus" style="width: 20px; height: 20px;">
+                    </button>
+                </form>
+
+                <button id="btnCheckout" data-id="@Model.id" class="btn btn-primary d-flex align-items-center gap-2">
+                    <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" alt="Plus Icon" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
+                    Checkout
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

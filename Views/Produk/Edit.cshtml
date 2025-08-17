@@ -1,0 +1,97 @@
+@model CoffeShop.Models.Produk
+
+@{
+    ViewData["title"] = "Edit Produk";
+}
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Edit Produk</h3>
+                        <a href="@Url.Action("Index", "Produk")" class="btn btn-warning">Kembali</a>
+                    </div>
+                    <div class="card-body">
+                        <form id="formProdukEdit" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="Nama" class="label-form">Nama</label>
+                                <input type="text" class="form-control" name="Nama" id="Nama" value="@Model.Nama" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Harga" class="label-form">Harga</label>
+                                <input type="number" class="form-control" name="Harga" id="Harga" value="@Model.HargaProduk" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Stok" class="label-form">Stok</label>
+                                <input type="number" class="form-control" name="Stok" id="Stok" value="@Model.Stok" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="GambarProduk" class="label-form">Gambar Produk</label>
+                                <div class="d-flex gap-2">
+                                    <input type="file" class="form-control" name="GambarProduk" id="GambarProduk">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                        Preview
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Deskripsi" class="label-form">Deskripsi</label>
+                                <textarea name="Deskripsi" id="Deskripsi" class="form-control" required>@Model.Deskripsi</textarea>
+                            </div>
+
+                            <button class="btn btn-primary" type="submit">Edit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* modal *@
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <img src="@Url.Content(Model.GambarProduk)" alt="" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $("#formProdukEdit").submit(function(e) {
+            e.preventDefault();
+
+            var dataForm = new FormData(this);
+
+            $.ajax({
+                url: '@Url.Action("Update", "Produk", new {id = @Model.id})',
+                type: 'POST',
+                data: dataForm,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    alert(response.pesan)
+                    window.location.href = '@Url.Action("Index", "Produk")'
+                },
+                error: function(xhr, status, code) {
+                    let response = xhr.responseJSON;
+                    let pesan = response && response.pesan ? response.pesan : "Terjadi kesalahan";
+                    alert("Gagal: " + pesan);
+                }
+            });
+        });
+    </script>
+}

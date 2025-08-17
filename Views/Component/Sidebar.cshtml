@@ -1,0 +1,63 @@
+ <!-- Sidebar Menu -->
+ <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="/" class="nav-link">
+              <i class="nav-icon fas fa-home"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-table"></i>
+              <p>
+                Menu Utama
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="@Url.Action("Index", "User")" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kelola User</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@Url.Action("Index", "Produk")" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kelola Produk</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@Url.Action("Index", "Transaksi")" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kelola Seluruh Penjualan</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@Url.Action("Index", "TesImport")" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Import</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="@Url.Action("Index", "Supplier")" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Supplier</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="@Url.Action("Index", "CustomerPage")" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Kembali</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->

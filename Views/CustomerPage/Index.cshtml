@@ -1,0 +1,141 @@
+@model IEnumerable<CoffeShop.Models.Produk>
+
+@{
+    ViewData["title"] = "Home Menu";
+    Layout = "~/Views/CustomerPage/Layout.cshtml";
+}
+
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+        <h3 class="mb-4">All Menu</h3>
+
+        <div class="row g-3">
+            @foreach (var produk in Model)
+            {
+                <div class="col-md-3 col-sm-6">
+                    <div class="card h-100 shadow-sm" style="border: 1px solid #f6f6f6;">
+                        <img src="@Url.Content(produk.GambarProduk)" class="card-img-top"
+                        alt="Kopi"
+                        style="height: 200px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@produk.Nama</h5>
+                            @{
+                                var deskripsi = produk.Deskripsi?.Length > 50
+                                    ? produk.Deskripsi.Substring(0, 50) + "..."
+                                    : produk.Deskripsi;
+                            }
+                            <p class="card-text text-muted small">@deskripsi</p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <button class="btn btn-primary w-100 rounded-pill fw-semibold" onclick="openDetailModal(@produk.id)">
+                                Lihat Selengkapnya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+    </div>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        function openDetailModal(id) {
+            $('#detailModal .modal-content').html(`
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Produk</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Memuat...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            `);
+
+            function initQtyButtons() {
+                const inputQty = document.getElementById("jumlahInput");
+                const buttonMin = document.getElementById("buttonMin");
+                const buttonPlus = document.getElementById("buttonPlus");
+                const Stok = document.getElementById("jumlahStok");
+
+                if (!inputQty || !buttonMin || !buttonPlus || !Stok) return;
+
+                buttonMin.addEventListener("click", function () {
+                    let currentValue = parseInt(inputQty.value);
+                    if (currentValue > 1) {
+                        inputQty.value = currentValue - 1;
+                    }
+                });
+
+                buttonPlus.addEventListener("click", function () {
+                    let currentValue = parseInt(inputQty.value);
+                    let stokParse = parseInt(Stok.value);
+                    if (currentValue >= stokParse) {
+                        alert("Stok produk ini tidak mencukupi");
+                    } else {
+                        inputQty.value = currentValue + 1;
+                    }
+                });
+            }
+
+            $(document).off('click', '#btnCheckout').on('click', '#btnCheckout', function() {
+                const produkId = $(this).data('id');
+                const inputQty = document.getElementById("jumlahInput").value;
+
+                const url = `/CustomerPage/GetDetailTransaksi?id=${produkId}&qty=${inputQty}`;
+                window.location.href = url;
+            });
+
+            $(document).off("submit", "#formKeranjang").on("submit", "#formKeranjang", function(e) {
+                e.preventDefault();
+
+                const produkId = $("#ProdukId").val();
+                const inputQty = document.getElementById("jumlahInput").value;
+                const token = $("input[name='__RequestVerificationToken']").val(); 
+                console.log(produkId + " " + inputQty);
+
+                $.ajax({
+                    url: '/CustomerPage/TambahKeranjang',
+                    type: 'POST',
+                    data: {
+                        __RequestVerificationToken: token,
+                        produkId: produkId,
+                        jumlahBeli: inputQty
+                    },
+                    success: function(response) {
+                        alert(response.pesan);
+                        @* close modal *@
+                        $('#detailModal').modal('hide');
+                        loadKeranjang();
+                    },
+                    error: function(xhr, status, code) {
+                        alert("Terjadi kesalahan");
+                        loadKeranjang();
+                    }
+                });
+            });
+
+            // Load data dari partial view
+            $.get(`/CustomerPage/Detail/${id}`, function (html) {
+                $('#detailModal .modal-content').html(html);
+                initQtyButtons();
+            });
+
+            $('#detailModal').modal('show');
+        }
+    </script>
+}
+

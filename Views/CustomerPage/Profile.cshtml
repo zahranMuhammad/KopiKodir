@@ -1,0 +1,220 @@
+@model IEnumerable<(CoffeShop.Models.DetailTransaksi Detail, CoffeShop.Models.Transaksi Transaksi)>
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/CustomerPage/Layout.cshtml";
+}
+
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+        <!-- Card Profile -->
+        <section id="user-profile">
+            <div class="card">
+                <div class="card-body row align-items-center">
+
+                    <!-- Kiri: Foto dan Info -->
+                    <div class="col-md-8 d-flex align-items-center">
+                        <div class="avatar avatar-xl me-2">
+                            <img src="https://www.w3schools.com/howto/img_avatar.png" alt="avatar" class="rounded-circle" width="100" />
+                        </div>
+                        <div>
+                            <h4 class="mb-0">@ViewBag.dataUser.Nama</h4>
+                            <small class="text-muted">@ViewBag.dataUser.Email</small><br />
+                            <span class="badge bg-primary mt-1">@ViewBag.dataUser.Role</span>
+                        </div>
+                    </div>
+
+                    <!-- Kanan: Saldo + Tombol Top Up -->
+                    <div class="col-md-4 text-md-end text-start mt-2 mt-md-0">
+                        <div class="border rounded p-2 d-inline-block w-100">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Saldo</h6>
+                                    <h4 class="text-success mb-0">Rp @ViewBag.dataUser.Saldo.ToString("N0")</h4>
+                                </div>
+                                <i data-feather="credit-card" style="width: 24px; height: 24px;"></i>
+                            </div>
+
+                            <div class="mt-3">
+                                <small class="text-muted">Metode Top Up:</small>
+                                <div class="d-flex flex-wrap gap-2 mt-1">
+
+                                    <!-- Indomaret -->
+                                    <button class="btn btn-light border d-flex align-items-center justify-content-center p-2"
+                                            style="width: 50px; height: 50px;" title="Indomaret">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Indomaret.png/1200px-Logo_Indomaret.png"
+                                            alt="Indomaret" style="width: 34px; height: 34px; object-fit: contain;">
+                                    </button>
+
+                                    <!-- Pulsa -->
+                                    <button class="btn btn-light border d-flex align-items-center justify-content-center p-2"
+                                            style="width: 50px; height: 50px;" title="Pulsa">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/3126/3126580.png"
+                                            alt="Pulsa" style="width: 34px; height: 34px; object-fit: contain;">
+                                    </button>
+
+                                    <!-- DANA -->
+                                    <button class="btn btn-light border d-flex align-items-center justify-content-center p-2"
+                                            style="width: 50px; height: 50px;" title="DANA">
+                                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEj10i8Btb-dl9eXZNX3Wyn2g_fM28L9bHQOJ37eW7eHhVqNhYdndDf40Ba4Zm88GyKR1bhvbtWmF-fY61RbMnHhP-ea9wJbrZYlg1BLD5xqToO4KE85LbfHbZf6J7R8MdkKcICrdyr8WpBFGw_ujAM-zcmWy8ssLC4Sv8C1nzrL1jtrsNLzyqm6Rr4T=s16000"
+                                            alt="DANA" style="width: 34px; height: 34px; object-fit: contain;">
+                                    </button>
+
+                                    <!-- KediKM (pakai SVG) -->
+                                    <button class="btn btn-light border d-flex align-items-center justify-content-center p-2"
+                                            style="width: 50px; height: 50px;" title="TOKO KOPIKODIR">
+                                        <img src="https://cdn.pixabay.com/photo/2016/12/20/05/24/store-1919713_1280.png"
+                                        alt="TOKO KOPIKODIR" style="width: 34px; height: 34px; object-fit: contain;">
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab Panel -->
+        <section id="profile-tabs" class="mt-2">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="profileTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="detail-tab" data-bs-toggle="tab" href="#detail" role="tab">
+                                <i data-feather="user" class="me-25"></i> Data Diri Lengkap
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">
+                                <i data-feather="shopping-bag" class="me-25"></i> Riwayat Pembelian
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-1">
+                        <!-- Data Diri -->
+                        <div class="tab-pane fade show active" id="detail" role="tabpanel">
+                            <ul class="list-unstyled">
+                                <li><strong>Nama:</strong> @ViewBag.dataUser.Nama</li>
+                                <li><strong>Email:</strong> @ViewBag.dataUser.Email</li>
+                                <li><strong>Telepon:</strong> @ViewBag.dataUser.NoHp</li>
+                                <li><strong>Tanggal Lahir:</strong> @ViewBag.dataUser.TglLahir.ToString("yyyy-MM-dd")</li>
+                                <li><strong>Alamat:</strong> @ViewBag.dataUser.Alamat</li>
+                            </ul>
+                        </div>
+
+                        <!-- Riwayat Pembelian -->
+                        <div class="tab-pane fade" id="history" role="tabpanel">
+                            <div class="row">
+                                <!-- Contoh Riwayat Pembelian -->
+                                @if (Model == null || !Model.Any(item => item.Detail != null && item.Transaksi != null))
+                                {
+                                    <p class="text-center text-danger fw-bold">Data Riwayat Pembelian Anda Kosong</p>
+                                } 
+                                else
+                                {
+                                    @foreach(var item in Model)
+                                    {
+                                        var detail = item.Detail;
+                                        var transaksi = item.Transaksi;
+
+                                        @if(detail != null & transaksi != null)
+                                        {
+                                            @if(transaksi.Status != "Keranjang")
+                                            {
+                                                <div class="col-12 mb-1">
+                                                    <div class="card">
+                                                        <div class="card-body d-flex position-relative">
+                                                            <!-- Tombol X -->
+                                                            @if(transaksi.Status == "Selesai")
+                                                            {
+                                                                <button type="button" class="btn-close ms-auto position-absolute" style="top: 10px; right: 10px;" aria-label="Close"></button>
+                                                            }
+
+                                                            <!-- Gambar Produk -->
+                                                            <div class="me-2">
+                                                                <img src="@Url.Content(detail.produk.GambarProduk)" alt="Produk" class="img-thumbnail" style="width: 100px;" />
+                                                            </div>
+
+                                                            <!-- Info Produk -->
+                                                            <div class="flex-grow-1">
+                                                                <h5 class="mb-0">@detail.produk.Nama</h5>
+                                                                <small class="text-muted">Harga Satuan: Rp @detail.produk.HargaProduk.ToString("N0")</small><br />
+                                                                <small class="text-muted">Jumlah Beli: @detail.JumlaBarang</small><br />
+                                                                <small class="text-muted">Total: Rp @detail.Total.ToString("N0")</small><br />
+                                                                <div class="d-flex gap-1">
+                                                                    @{
+                                                                        string status2 = ""; 
+                                                                        if (transaksi.Status == "Sedang Dalam Perjalanan" && transaksi.MetodePembayaran == "COD")
+                                                                        {
+                                                                            status2 = "Belum Dibayar";
+                                                                        }
+                                                                    }
+                                                                    @if (!string.IsNullOrEmpty(status2))
+                                                                    {
+                                                                        <span class="badge bg-success mt-1">@status2</span>
+                                                                    }
+                                                                    <span class="badge bg-warning mt-1">@transaksi.Status</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Info Metode Pembayaran & Tanggal Beli di pojok kanan -->
+                                                            <div class="position-absolute text-end" style="top: 50%; right: 10px; transform: translateY(-50%);">
+                                                                <small class="d-block text-muted">Metode Pembayaran: @transaksi.MetodePembayaran</small>
+                                                                <small class="d-block text-muted">Tgl: @transaksi.Tanggal.ToString("dd MMM yyyy")</small>
+
+                                                                @if(transaksi.Status == "Sudah Sampai") {
+                                                                    <button type="button" data-id="@transaksi.Id" class="btn btn-sm btn-info mt-1 btnSelesai">Selesai</button>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).on('click', '.btnSelesai', function (e) {
+            e.preventDefault();
+
+            var button = $(this);
+            var transaksiId = button.data('id');
+
+            if(confirm("apakah pesanan ini sudah datang dan sesuai?")) {    
+                $.ajax({
+                    url: '/CustomerPage/Selesai/' + transaksiId,
+                    type: 'GET',
+                    success: function (response) {
+                        button.closest('.card').fadeOut();
+
+                        alert(response.pesan);
+                    },
+                    error: function (xhr) {
+                        alert("Gagal menyelesaikan transaksi.");
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
+    </script>
+}
+
+

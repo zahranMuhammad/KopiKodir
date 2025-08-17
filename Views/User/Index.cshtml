@@ -1,0 +1,231 @@
+@{
+    ViewData["title"] = "Kelola User";
+}
+
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Kelola Data User</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="tableUser"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function() {
+            $("#tableUser").dxDataGrid({
+                dataSource: {
+                    store: {
+                        type: "odata",
+                        version: 4,
+                        url: "/odata/ApiUser",
+                        key: "Id"
+                    }
+                },
+                paging: {
+                    pageSize: 10
+                },
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [10, 20, 50],
+                    showInfo: true
+                },
+                filterRow: {
+                    visible: true
+                },
+                searchPanel: {
+                    visible: true,
+                    width: 240,
+                    placeholder: "Cari..."  
+                },
+                columns: [
+                    {
+                        dataField: "Id",
+                        visible: false,
+                        sortOrder: "desc", 
+                        sortIndex: 0       
+                    },
+                    {
+                        caption: "No",
+                        cellTemplate: function (container, options) {
+                            container.text(options.rowIndex + 1);
+                        },
+                        width: 50
+                    },
+                    { 
+                        dataField: "Nama", 
+                        caption: "Nama" 
+                    },
+                    { 
+                        dataField: "Email", 
+                        caption: "Email" 
+                    },
+                    {
+                        dataField: "TglLahir", 
+                        caption: "Tanggal Lahir" 
+                    },
+                    {
+                        dataField: "Role", 
+                        caption: "Role" 
+                    },
+                    {
+                        caption: "Nonaktif",
+                        cellTemplate: function (container, options) {
+                            const id = options.data.Id;
+                            const status = options.data.IsDelete;
+
+                            if(status == 1) {
+                                container.append(`<label class="switch"><input class="slider-delete" checked data-id="${id}" type="checkbox"><span class="slider round"></span></label>`);
+                            } else {
+                                container.append(`<label class="switch"><input class="slider-delete" data-id="${id}" type="checkbox"><span class="slider round"></span></label>`);
+                            }
+                        },
+                        width: 80 
+                    },
+                    {
+                        caption: "Aksi",
+                        cellTemplate: function (container, options) {
+                            const id = options.data.Id;
+                            const div = $("<div>");
+                                div.append(`<button class="btn btn-sm btn-success mr-1" onclick="openDetailModal(${id})">Detail</button>`);
+                            container.append(div);
+                        },
+                        width: 170
+                    }
+                ] 
+            });
+        });
+
+        let nilai = 0;
+
+        $(document).on("change", ".slider-delete", function () {
+            const checkbox = $(this);
+            const id = checkbox.data("id");
+
+            const oldChecked = !checkbox.is(":checked"); 
+            const newChecked = checkbox.is(":checked");
+
+            console.log("ID:", id);
+            console.log("Old Checked:", oldChecked);
+            console.log("New Status:", newChecked ? "Nonaktif" : "Aktif");
+
+            checkbox.prop("disabled", true);
+
+            $.ajax({
+                url: '/User/Delete/' + id,
+                type: 'GET',
+                data: { status: newChecked },
+                success: function (response) {
+                    alert(response.pesan || "Berhasil");
+                    checkbox.prop("disabled", false);
+                },
+                error: function () {
+                    alert("Gagal menyimpan perubahan");
+
+                    checkbox.prop("checked", oldChecked);
+                    checkbox.prop("disabled", false);
+                }
+            });
+        });
+        
+        function openDetailModal(id) {
+            $('#detailModal .modal-content').html(`
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Memuat...</p>
+                </div>
+            `);
+
+            // Load data dari partial view
+            $.get(`/User/Detail/${id}`, function (html) {
+                $('#detailModal .modal-content').html(html);
+            });
+
+            $('#detailModal').modal('show');
+        }
+    </script>
+}
